@@ -4,6 +4,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -17,13 +19,22 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtTokenProvider {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenProvider.class);
+
     private final Key key;
     private final long jwtExpirationInMs;
 
     public JwtTokenProvider(
             @Value("${app.jwt.secret}") String jwtSecret,
             @Value("${app.jwt.expiration-ms}") long jwtExpirationInMs) {
-        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        if (jwtSecret == null || jwtSecret.isBlank()) {
+            this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+            LOGGER.warn(
+                    "JWT_SECRET no está configurada; se usará una clave temporal. "
+                    + "Los tokens dejarán de ser válidos al reiniciar la aplicación.");
+        } else {
+            this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        }
         this.jwtExpirationInMs = jwtExpirationInMs;
     }
 
