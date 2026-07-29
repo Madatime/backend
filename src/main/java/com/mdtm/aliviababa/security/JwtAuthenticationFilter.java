@@ -1,4 +1,4 @@
-package com.jlgp.temursio.security;
+package com.mdtm.aliviababa.security;
 
 import java.io.IOException;
 
