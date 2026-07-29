@@ -67,9 +67,9 @@ public class VentaService {
     }
 
     @Transactional
-    public VentaEntity procesarVenta(VentaEntity ventaRequest, String email) {
-        ClienteEntity cliente = clienteRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Cliente no registrado: " + email));
+    public VentaEntity procesarVenta(VentaEntity ventaRequest, String username) {
+        ClienteEntity cliente = clienteRepository.findByUsuarioUsername(username)
+                .orElseThrow(() -> new RuntimeException("Cliente no registrado: " + username));
 
         ventaRequest.setCliente(cliente);
         ventaRequest.setFecha(LocalDateTime.now());
@@ -112,7 +112,7 @@ public class VentaService {
     }
 
     @Transactional(readOnly = true)
-    public List<VentaEntity> obtenerVentasPorCliente(String email) {
-        return ventaRepository.findByClienteEmail(email);
+    public List<VentaEntity> obtenerVentasPorCliente(String username) {
+        return ventaRepository.findByClienteUsuarioUsername(username);
     }
 }

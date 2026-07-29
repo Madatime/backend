@@ -21,7 +21,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 @RestController
 @RequestMapping("/api/v1/pagos")
 public class PagoController {
-    @Value("${stripe.apikey.secret:}")
+    @Value("${stripe.apikey.secret}")
     private String stripeSecretKey;
 
     private final VentaService ventaService;
@@ -33,10 +33,6 @@ public class PagoController {
     @PostMapping("/crear-intencion")
     public ResponseEntity<?> crearIntencion(@RequestBody PagoRequest peticion) {
         try {
-            if (stripeSecretKey == null || stripeSecretKey.isBlank()) {
-                return ResponseEntity.badRequest()
-                        .body("STRIPE_SECRET_KEY no está configurada");
-            }
             Stripe.apiKey = stripeSecretKey;
             VentaEntity venta = ventaService.obtenerPorId(peticion.getIdVenta());
             long montoCentavos = (long) (venta.getTotal() * 100);

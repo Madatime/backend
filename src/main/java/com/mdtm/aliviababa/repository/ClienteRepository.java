@@ -11,5 +11,7 @@ import com.mdtm.aliviababa.modelo.ClienteEntity;
 public interface ClienteRepository extends JpaRepository<ClienteEntity, Long> {
     Optional<ClienteEntity> findByEmail(String email);
 
+    Optional<ClienteEntity> findByUsuarioUsername(String username);
+
     boolean existsByEmail(String email);
 }

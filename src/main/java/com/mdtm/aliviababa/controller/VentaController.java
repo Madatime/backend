@@ -77,8 +77,8 @@ public class VentaController {
     @PostMapping("/")
     public ResponseEntity<?> crearVenta(@RequestBody VentaEntity venta, Principal principal) {
         try{
-            String email = principal.getName();
-            VentaEntity nuevaVenta = servicio.procesarVenta(venta, email);
+            String username = principal.getName();
+            VentaEntity nuevaVenta = servicio.procesarVenta(venta, username);
             return ResponseEntity.ok(nuevaVenta);
         }catch(Exception ex){
             return ResponseEntity.badRequest().body(ex.getMessage());    
@@ -88,8 +88,8 @@ public class VentaController {
 
     @GetMapping("/mis-compras")
     public ResponseEntity<List<VentaEntity>> listarMisCompras(Principal principal) {
-        String email = principal.getName();
-        return ResponseEntity.ok(servicio.obtenerVentasPorCliente(email));
+        String username = principal.getName();
+        return ResponseEntity.ok(servicio.obtenerVentasPorCliente(username));
     }
     
 }
