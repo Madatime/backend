@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.mdtm.aliviababa.dto.ClientePerfilDto;
 import com.mdtm.aliviababa.modelo.ClienteEntity;
 import com.mdtm.aliviababa.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,14 @@ public class ClienteService {
     public ClienteEntity obtenerPorId(Long id){
         return repository.findById(id).orElseThrow(
             () -> new RuntimeException("Cliente no encontrado: " + id));
+    }
+
+    @Transactional(readOnly = true)
+    public ClientePerfilDto obtenerPerfil(String username) {
+        ClienteEntity cliente = repository.findByUsuarioUsername(username)
+            .orElseThrow(() -> new RuntimeException("Cliente no encontrado: " + username));
+
+        return convertirAPerfil(cliente);
     }
 
     //GUARDAR CLIENTE
@@ -53,6 +63,29 @@ public class ClienteService {
         BeanUtils.copyProperties(detalleClienteEntity, clienteExistente, "id");
 
         return repository.save(clienteExistente);
+    }
+
+    @Transactional
+    public ClientePerfilDto actualizarPerfil(String username, ClientePerfilDto detallePerfil) {
+        ClienteEntity clienteExistente = repository.findByUsuarioUsername(username)
+            .orElseThrow(() -> new RuntimeException("Cliente no encontrado: " + username));
+
+        clienteExistente.setNombre(detallePerfil.nombre());
+        clienteExistente.setEmail(detallePerfil.email());
+        clienteExistente.setDireccion(detallePerfil.direccion());
+        clienteExistente.setTelefono(detallePerfil.telefono());
+
+        return convertirAPerfil(repository.save(clienteExistente));
+    }
+
+    private ClientePerfilDto convertirAPerfil(ClienteEntity cliente) {
+        return new ClientePerfilDto(
+            cliente.getUsuario().getUsername(),
+            cliente.getNombre(),
+            cliente.getEmail(),
+            cliente.getDireccion(),
+            cliente.getTelefono()
+        );
     }
 
 }

@@ -1,5 +1,6 @@
 package com.mdtm.aliviababa.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mdtm.aliviababa.dto.ClientePerfilDto;
 import com.mdtm.aliviababa.modelo.ClienteEntity;
 import com.mdtm.aliviababa.services.ClienteService;
 
@@ -37,6 +39,11 @@ public class ClienteController {
         return ResponseEntity.ok(servicio.obtenerPorId(id));
     }
 
+    @GetMapping("/perfil")
+    public ResponseEntity<ClientePerfilDto> obtenerPerfil(Principal principal) {
+        return ResponseEntity.ok(servicio.obtenerPerfil(principal.getName()));
+    }
+
     //eliminar por id
     @DeleteMapping("/{id}")
     public ResponseEntity<ClienteEntity> eliminar(@PathVariable Long id){
@@ -57,6 +64,19 @@ public class ClienteController {
         try{
         ClienteEntity ClienteAct = servicio.actualizarCliente(id, cliente);
         return ResponseEntity.ok(ClienteAct);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/perfil")
+    public ResponseEntity<?> actualizarPerfil(
+            Principal principal,
+            @RequestBody ClientePerfilDto cliente) {
+        try {
+            return ResponseEntity.ok(
+                servicio.actualizarPerfil(principal.getName(), cliente)
+            );
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }
