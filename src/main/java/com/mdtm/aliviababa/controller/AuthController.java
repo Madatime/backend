@@ -67,7 +67,6 @@ public class AuthController {
     public ResponseEntity<?> registro(@RequestBody RegistroRequest request){
 
         try{
-            request.setRol("ROLE_CLIENTE");
             UsuarioEntity usuario = usuarioService.saveUsuario(request);
             return ResponseEntity.ok(usuario);
 
