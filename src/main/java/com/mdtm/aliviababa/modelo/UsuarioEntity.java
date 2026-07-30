@@ -29,6 +29,9 @@ public class UsuarioEntity {
     private String nombre;
 
     @Column(nullable = true)
+    private String email;
+
+    @Column(nullable = true)
     private String direccion;
 
     @Column(nullable = true)

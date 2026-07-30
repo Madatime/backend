@@ -51,14 +51,23 @@ public class AuthController {
         .findFirst()
         .map(auth -> auth.getAuthority())
         .orElse("ROLE_CLIENTE");
+        UsuarioEntity usuario = usuarioService.obtenerPorUsername(
+            userPrincipal.getUsername()
+        );
 
-        return ResponseEntity.ok(new AuthResponse(token, userPrincipal.getUsername(), userPrincipal.getUsername(), authority));
+        return ResponseEntity.ok(new AuthResponse(
+            token,
+            userPrincipal.getUsername(),
+            usuario.getNombre(),
+            authority
+        ));
     }
     
     @PostMapping("/registro")
     public ResponseEntity<?> registro(@RequestBody RegistroRequest request){
 
         try{
+            request.setRol("ROLE_CLIENTE");
             UsuarioEntity usuario = usuarioService.saveUsuario(request);
             return ResponseEntity.ok(usuario);
 
